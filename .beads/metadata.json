@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "lifq_web",
+  "project_id": "57735485-bb15-4597-b03b-ae03b341f977"
+}
