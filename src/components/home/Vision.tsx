@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/Container";
+import { FadeUp } from "@/components/ui/animate";
 import { CheckCircle2 } from "lucide-react";
 
 const pillars = [
@@ -10,12 +11,9 @@ const pillars = [
 
 export function Vision() {
   return (
-    <section
-      className="py-20"
-      style={{ background: "#0D2A47" }}
-    >
+    <section className="py-20" style={{ background: "#0D2A47" }}>
       <Container>
-        <div className="max-w-2xl mx-auto text-center">
+        <FadeUp className="max-w-2xl mx-auto text-center">
           <p className="text-sm font-medium tracking-wide text-brand-teal uppercase mb-4">
             Our vision
           </p>
@@ -34,7 +32,7 @@ export function Vision() {
               </li>
             ))}
           </ul>
-        </div>
+        </FadeUp>
       </Container>
     </section>
   );

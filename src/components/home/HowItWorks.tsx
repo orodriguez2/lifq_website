@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/Container";
+import { FadeUp, StaggerContainer, StaggerItem } from "@/components/ui/animate";
 import { Upload, ScanSearch, ShieldCheck } from "lucide-react";
 
 const steps = [
@@ -29,18 +30,17 @@ export function HowItWorks() {
   return (
     <section className="py-20 bg-background">
       <Container>
-        <div className="text-center mb-14">
+        <FadeUp className="text-center mb-14">
           <p className="text-sm font-medium tracking-wide text-brand-teal uppercase mb-3">
             How it works
           </p>
           <h2 className="text-3xl md:text-4xl font-heading font-medium" style={{ color: "#0D2A47" }}>
             Three steps to complete clarity
           </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        </FadeUp>
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {steps.map(({ number, icon: Icon, title, description }) => (
-            <div key={number} className="relative text-center">
-              {/* Step number */}
+            <StaggerItem key={number} hover={false} className="relative text-center">
               <div className="text-6xl font-heading font-medium text-border mb-4 leading-none">
                 {number}
               </div>
@@ -51,9 +51,9 @@ export function HowItWorks() {
                 {title}
               </h3>
               <p className="text-muted-foreground leading-relaxed">{description}</p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </Container>
     </section>
   );

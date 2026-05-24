@@ -1,12 +1,13 @@
 import { ButtonLink } from "@/components/ui/button-link";
 import { Container } from "@/components/layout/Container";
+import { FadeUp } from "@/components/ui/animate";
 import { ArrowRight, Lock } from "lucide-react";
 
 export function FinalCTA() {
   return (
     <section className="py-24 bg-background">
       <Container>
-        <div className="max-w-xl mx-auto text-center">
+        <FadeUp className="max-w-xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-heading font-medium mb-4" style={{ color: "#0D2A47" }}>
             Ready for clarity?
           </h2>
@@ -25,7 +26,7 @@ export function FinalCTA() {
             <Lock className="h-3.5 w-3.5" />
             Free during beta. Limited spots.
           </p>
-        </div>
+        </FadeUp>
       </Container>
     </section>
   );

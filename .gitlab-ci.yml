@@ -1,0 +1,109 @@
+stages:
+  - validate
+  - build
+  - deploy
+
+# ─── shared node setup ────────────────────────────────────────────────────────
+
+default:
+  image: node:22-alpine
+  before_script:
+    - npm ci --prefer-offline
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+    policy: pull-push
+
+# ─── validate stage ───────────────────────────────────────────────────────────
+
+typecheck:
+  stage: validate
+  script:
+    - npx tsc --noEmit
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+lint:
+  stage: validate
+  script:
+    - npm run lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+# ─── build stage ──────────────────────────────────────────────────────────────
+
+build:
+  stage: build
+  script:
+    - npm run build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+  # Environment variables needed for Next.js build
+  variables:
+    NEXT_PUBLIC_SUPABASE_URL: $NEXT_PUBLIC_SUPABASE_URL
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: $NEXT_PUBLIC_SUPABASE_ANON_KEY
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: $NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    # Tell Next.js to skip actual external calls during build
+    NEXT_PHASE: phase-production-build
+
+# ─── deploy preview (all branches except master) ──────────────────────────────
+
+deploy-preview:
+  stage: deploy
+  image: node:22-alpine
+  before_script:
+    - npm install -g vercel
+  script:
+    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+    - vercel build --token=$VERCEL_TOKEN
+    - PREVIEW_URL=$(vercel deploy --prebuilt --token=$VERCEL_TOKEN)
+    - echo "Preview URL → $PREVIEW_URL"
+    - echo "PREVIEW_URL=$PREVIEW_URL" >> deploy.env
+  artifacts:
+    reports:
+      dotenv: deploy.env
+  environment:
+    name: preview/$CI_COMMIT_REF_SLUG
+    url: $PREVIEW_URL
+    auto_stop_in: 7 days
+    on_stop: stop-preview
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "master"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+stop-preview:
+  stage: deploy
+  image: node:22-alpine
+  before_script:
+    - npm install -g vercel
+  script:
+    - echo "Preview environment stopped (Vercel handles TTL automatically)"
+  environment:
+    name: preview/$CI_COMMIT_REF_SLUG
+    action: stop
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "master"
+      when: manual
+
+# ─── deploy production (master only) ─────────────────────────────────────────
+
+deploy-production:
+  stage: deploy
+  image: node:22-alpine
+  before_script:
+    - npm install -g vercel
+  script:
+    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+    - vercel build --prod --token=$VERCEL_TOKEN
+    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+  environment:
+    name: production
+    url: https://lifq.ai
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"

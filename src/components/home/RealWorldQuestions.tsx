@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/Container";
+import { FadeUp, StaggerContainer, StaggerItem } from "@/components/ui/animate";
 import { MessageCircle } from "lucide-react";
 
 const questions = [
@@ -12,17 +13,17 @@ export function RealWorldQuestions() {
   return (
     <section className="py-20 bg-surface-alt">
       <Container>
-        <div className="text-center mb-12">
+        <FadeUp className="text-center mb-12">
           <p className="text-sm font-medium tracking-wide text-brand-teal uppercase mb-3">
             Real questions, real answers
           </p>
           <h2 className="text-3xl md:text-4xl font-heading font-medium" style={{ color: "#0D2A47" }}>
             Questions LifQ answers for your family
           </h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+        </FadeUp>
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
           {questions.map((question) => (
-            <div
+            <StaggerItem
               key={question}
               className="flex gap-4 p-6 bg-card rounded-xl border border-border shadow-sm"
             >
@@ -30,9 +31,9 @@ export function RealWorldQuestions() {
                 <MessageCircle className="h-4 w-4 text-brand-blue" />
               </div>
               <p className="text-foreground leading-relaxed">&ldquo;{question}&rdquo;</p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </Container>
     </section>
   );

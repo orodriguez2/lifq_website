@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/Container";
+import { FadeUp, StaggerContainer, StaggerItem } from "@/components/ui/animate";
 import { Eye, Brain, Users } from "lucide-react";
 
 const solutions = [
@@ -32,17 +33,17 @@ export function SolutionGrid() {
   return (
     <section className="py-20 bg-background">
       <Container>
-        <div className="text-center mb-12">
+        <FadeUp className="text-center mb-12">
           <p className="text-sm font-medium tracking-wide text-brand-teal uppercase mb-3">
             The solution
           </p>
           <h2 className="text-3xl md:text-4xl font-heading font-medium" style={{ color: "#0D2A47" }}>
             Clarity across everything you already pay for
           </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        </FadeUp>
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {solutions.map(({ icon: Icon, title, description, color, iconColor }) => (
-            <div
+            <StaggerItem
               key={title}
               className="text-center p-8 rounded-2xl border border-border bg-card hover:shadow-md transition-shadow"
             >
@@ -53,9 +54,9 @@ export function SolutionGrid() {
                 {title}
               </h3>
               <p className="text-muted-foreground leading-relaxed">{description}</p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </Container>
     </section>
   );

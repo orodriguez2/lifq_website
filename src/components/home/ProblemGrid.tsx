@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/Container";
+import { FadeUp, StaggerContainer, StaggerItem } from "@/components/ui/animate";
 import { Layers, HelpCircle, DollarSign, AlertCircle } from "lucide-react";
 
 const problems = [
@@ -28,14 +29,14 @@ export function ProblemGrid() {
   return (
     <section className="py-20 bg-surface-alt">
       <Container>
-        <div className="text-center mb-12">
+        <FadeUp className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-heading font-medium" style={{ color: "#0D2A47" }}>
             Insurance and benefits shouldn&rsquo;t feel this complicated
           </h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        </FadeUp>
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {problems.map(({ icon: Icon, title, description }) => (
-            <div
+            <StaggerItem
               key={title}
               className="bg-card rounded-xl p-6 border border-border shadow-sm hover:shadow-md transition-shadow"
             >
@@ -46,9 +47,9 @@ export function ProblemGrid() {
                 {title}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </Container>
     </section>
   );
