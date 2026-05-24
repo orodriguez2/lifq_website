@@ -108,7 +108,7 @@ mirror-to-github:
   needs:
     - e2e
   script:
-    - git remote add github "https://oauth2:${GITHUB_PAT}@github.com/${GITHUB_USERNAME}/lifq-web.git"
+    - git remote add github "https://oauth2:${GITHUB_PAT}@github.com/orodriguez2/lifq_website.git"
     - git push github "HEAD:refs/heads/${CI_COMMIT_BRANCH}" --force
   rules:
     - if: $CI_COMMIT_BRANCH
@@ -131,7 +131,6 @@ mirror-to-github:
 #   NEXT_PUBLIC_SUPABASE_ANON_KEY      used by: build, e2e
 #   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY used by: build, e2e
 #   GITHUB_PAT                         used by: mirror-to-github (masked, repo scope)
-#   GITHUB_USERNAME                    used by: mirror-to-github
 #
 # Vercel env vars are managed in Vercel Dashboard — not here.
 # VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID are NOT needed in GitLab CI.
@@ -139,4 +138,3 @@ mirror-to-github:
 # One-time setup:
 #   1. Delete the automatic push mirror in GitLab → Settings → Repository → Mirroring
 #   2. Add GITHUB_PAT (GitHub PAT, repo scope, masked) to GitLab CI/CD variables
-#   3. Add GITHUB_USERNAME to GitLab CI/CD variables
