@@ -1,6 +1,7 @@
 import { Hero } from "@/components/home/Hero";
 import { ProblemGrid } from "@/components/home/ProblemGrid";
 import { SolutionGrid } from "@/components/home/SolutionGrid";
+import { AppShowcase } from "@/components/home/AppShowcase";
 import { RealWorldQuestions } from "@/components/home/RealWorldQuestions";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { PrivacyCommitments } from "@/components/home/PrivacyCommitments";
@@ -17,6 +18,7 @@ export default function HomePage() {
       <Hero />
       <ProblemGrid />
       <SolutionGrid />
+      <AppShowcase />
       <RealWorldQuestions />
       <HowItWorks />
       <PrivacyCommitments />
