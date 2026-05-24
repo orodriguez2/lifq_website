@@ -18,7 +18,7 @@ test.describe("Beta signup form", () => {
   });
 
   test("honeypot field is not in viewport", async ({ page }) => {
-    const honeypot = page.locator('[aria-hidden="true"][tabindex="-1"]');
+    const honeypot = page.locator('input[name="honeypot"]');
     await expect(honeypot).not.toBeInViewport();
   });
 

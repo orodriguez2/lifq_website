@@ -16,7 +16,7 @@ test.describe("Homepage", () => {
 
   test("AppShowcase section is visible", async ({ page }) => {
     await expect(
-      page.locator("section").filter({ hasText: "Your household's protection, at a glance" })
+      page.locator("section").filter({ hasText: "at a glance" })
     ).toBeVisible();
   });
 
