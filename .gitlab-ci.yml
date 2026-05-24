@@ -1,7 +1,11 @@
 stages:
   - validate
   - build
-  - deploy
+  - test
+
+# Playwright image version — bump here when upgrading @playwright/test
+variables:
+  PLAYWRIGHT_VERSION: "1.60.0"
 
 # ─── shared node setup ────────────────────────────────────────────────────────
 
@@ -41,69 +45,72 @@ build:
   stage: build
   script:
     - npm run build
+  artifacts:
+    paths:
+      - .next/
+    expire_in: 1 hour
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
-  # Environment variables needed for Next.js build
   variables:
     NEXT_PUBLIC_SUPABASE_URL: $NEXT_PUBLIC_SUPABASE_URL
     NEXT_PUBLIC_SUPABASE_ANON_KEY: $NEXT_PUBLIC_SUPABASE_ANON_KEY
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: $NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-    # Tell Next.js to skip actual external calls during build
     NEXT_PHASE: phase-production-build
 
-# ─── deploy preview (all branches except master) ──────────────────────────────
+# ─── test stage ───────────────────────────────────────────────────────────────
 
-deploy-preview:
-  stage: deploy
-  image: node:22-alpine
+e2e:
+  stage: test
+  # Official Playwright image — Chromium + all system deps pre-installed
+  image: mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-jammy
+  # Override default before_script: install Node deps (cache not shared across images)
   before_script:
-    - npm install -g vercel
+    - npm ci --prefer-offline
+  needs:
+    - build
   script:
-    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - vercel build --token=$VERCEL_TOKEN
-    - PREVIEW_URL=$(vercel deploy --prebuilt --token=$VERCEL_TOKEN)
-    - echo "Preview URL → $PREVIEW_URL"
-    - echo "PREVIEW_URL=$PREVIEW_URL" >> deploy.env
+    # Start the production server in the background using the .next/ artifact
+    - npm run start &
+    # Wait up to 30 s for the server to respond
+    - |
+      for i in $(seq 1 30); do
+        curl -sf http://localhost:3001/ && break
+        echo "Waiting for server... attempt $i/30"
+        sleep 1
+      done
+    # Run Playwright against the running server
+    - PLAYWRIGHT_BASE_URL=http://localhost:3001 npx playwright test
   artifacts:
-    reports:
-      dotenv: deploy.env
-  environment:
-    name: preview/$CI_COMMIT_REF_SLUG
-    url: $PREVIEW_URL
-    auto_stop_in: 7 days
-    on_stop: stop-preview
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+    expire_in: 7 days
+  variables:
+    PORT: "3001"
+    NEXT_PUBLIC_SUPABASE_URL: $NEXT_PUBLIC_SUPABASE_URL
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: $NEXT_PUBLIC_SUPABASE_ANON_KEY
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: $NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   rules:
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "master"
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
 
-stop-preview:
-  stage: deploy
-  image: node:22-alpine
-  before_script:
-    - npm install -g vercel
-  script:
-    - echo "Preview environment stopped (Vercel handles TTL automatically)"
-  environment:
-    name: preview/$CI_COMMIT_REF_SLUG
-    action: stop
-  rules:
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "master"
-      when: manual
-
-# ─── deploy production (master only) ─────────────────────────────────────────
-
-deploy-production:
-  stage: deploy
-  image: node:22-alpine
-  before_script:
-    - npm install -g vercel
-  script:
-    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-    - vercel build --prod --token=$VERCEL_TOKEN
-    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
-  environment:
-    name: production
-    url: https://lifq.ai
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+# ─── deployment note ──────────────────────────────────────────────────────────
+#
+# Deployment is handled by Vercel — NOT by this pipeline.
+#
+# Flow:
+#   git push → GitLab (source of truth)
+#              └── push mirror → GitHub (automatic, ~seconds)
+#                                └── Vercel webhook
+#                                      ├── feature branch → preview URL (7-day TTL)
+#                                      └── master → lifq.ai (production)
+#
+# Required GitLab CI/CD variables (Settings → CI/CD → Variables):
+#   NEXT_PUBLIC_SUPABASE_URL          used by: build, e2e
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY     used by: build, e2e
+#   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY used by: build, e2e
+#
+# Vercel env vars are managed in Vercel Dashboard — not here.
+# VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID are NOT needed in GitLab CI.

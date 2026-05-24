@@ -174,24 +174,94 @@ supabase db push
 
 ## CI/CD
 
-GitLab CI drives all deployments via the Vercel CLI (`.gitlab-ci.yml`).
+### Architecture
 
-| Git event | Jobs that run | Outcome |
+```text
+git push → GitLab (source of truth, gitlab.pakal.io)
+               │
+               ├── GitLab CI pipeline (validate → build → test)
+               │     ├── typecheck  (tsc --noEmit)
+               │     ├── lint       (eslint)
+               │     ├── build      (next build — artifact: .next/)
+               │     └── e2e        (Playwright / Chromium)
+               │
+               └── Push mirror — automatic, seconds
+                         │
+                         ▼
+                   GitHub (read-only mirror)
+                         │
+                         └── Vercel webhook
+                               ├── feature branch → preview URL (7-day TTL)
+                               └── master → lifq.ai (production)
+```
+
+GitLab is the **source of truth**. GitHub is a read-only push mirror. Vercel watches GitHub and deploys automatically — no Vercel tokens are needed in GitLab CI.
+
+### Pipeline stages
+
+| Stage | Jobs | Triggered by |
 | --- | --- | --- |
-| Push to any branch | `typecheck`, `lint`, `build` | Validation gate |
-| Push to any non-`master` branch | `deploy-preview` | Vercel preview URL (7-day TTL) |
-| Push to `master` | `deploy-production` | Live deploy to `lifq.ai` |
+| validate | `typecheck`, `lint` | every push |
+| build | `build` — produces `.next/` artifact | every push |
+| test | `e2e` — Playwright / Chromium against prod build | every push |
 
-**Required GitLab CI/CD variables** (set in GitLab → Settings → CI/CD → Variables):
+### E2E tests (Playwright)
 
-| Variable | Value |
+Tests live in `e2e/`. Each spec covers a key user flow:
+
+| Spec | What it covers |
 | --- | --- |
-| `VERCEL_TOKEN` | From Vercel → Account Settings → Tokens |
-| `VERCEL_ORG_ID` | From `vercel link` output or Vercel project settings |
-| `VERCEL_PROJECT_ID` | From `vercel link` output or Vercel project settings |
-| `NEXT_PUBLIC_SUPABASE_URL` | Shared Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Shared Supabase anon key |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key |
+| `e2e/home.spec.ts` | Homepage renders, hero copy, AppShowcase, FinalCTA, CTA links |
+| `e2e/nav.spec.ts` | Pricing link, Log in link, Join the beta, logo navigation |
+| `e2e/pricing.spec.ts` | 3 plan cards, Annual/Monthly toggle, Most popular badge |
+| `e2e/beta-signup.spec.ts` | Form fields, honeypot hidden, validation errors, submit button |
+
+**Run locally** (dev server starts automatically if not already running):
+
+```bash
+npm run test:e2e          # headless run
+npm run test:e2e:ui       # interactive UI mode
+npm run test:e2e:report   # open last HTML report
+```
+
+In CI, tests run against `npm run start` (production build) using the official Playwright Docker image (`mcr.microsoft.com/playwright:v1.60.0-jammy`). Reports are stored as job artifacts for 7 days.
+
+### Pre-commit hooks (Husky + lint-staged)
+
+Every commit runs ESLint (with auto-fix) and `tsc --noEmit` against staged `.ts`/`.tsx` files before the commit is recorded. Bypass with `git commit --no-verify` for WIP commits.
+
+### Vercel deployment
+
+Vercel connects to the **GitHub mirror** (not GitLab directly) and deploys automatically on push.
+
+| Git event | Vercel action | Result |
+| --- | --- | --- |
+| Push to any non-`master` branch | Preview build | Preview URL |
+| Push to `master` | Production build | `lifq.ai` |
+
+Vercel environment variables are managed in **Vercel Dashboard → Project Settings → Environment Variables**. They are not set in GitLab CI.
+
+### GitLab CI/CD variables
+
+Set these in GitLab → Settings → CI/CD → Variables:
+
+| Variable | Used by |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | `build`, `e2e` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `build`, `e2e` |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `build`, `e2e` |
+
+`VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` are **not needed** — Vercel deploys independently from GitHub.
+
+### One-time mirror setup
+
+1. Create an empty GitHub repo (no README, no `.gitignore`)
+2. Generate a GitHub PAT with `repo` scope
+3. GitLab → Settings → Repository → Mirroring → **Add push mirror**
+   - URL: `https://github.com/<handle>/lifq-web.git`
+   - Auth: GitHub username + PAT as password
+   - Mirror protected branches only: **No** (Vercel needs all branches for previews)
+4. Vercel → Project Settings → Git → connect to the GitHub repo → production branch: `master`
 
 ---
 
