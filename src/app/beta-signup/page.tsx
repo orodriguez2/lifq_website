@@ -25,11 +25,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { ButtonLink } from "@/components/ui/button-link";
+import { CheckCircle2, Loader2 } from "lucide-react";
 
 export default function BetaSignupPage() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [alreadySignedUp, setAlreadySignedUp] = useState(false);
 
   const {
     register,
@@ -49,6 +51,10 @@ export default function BetaSignupPage() {
       body: JSON.stringify(data),
     });
     const json = await res.json();
+    if (res.status === 409) {
+      setAlreadySignedUp(true);
+      return;
+    }
     if (!res.ok) {
       setServerError(json.error ?? "Something went wrong. Please try again.");
       return;
@@ -70,6 +76,23 @@ export default function BetaSignupPage() {
               quality, so acceptance is not guaranteed for everyone.
             </p>
           </div>
+
+          {alreadySignedUp && (
+            <div className="mb-6 flex flex-col items-center gap-3 rounded-xl border border-brand-teal/30 bg-[#E0F7F5] p-6 text-center">
+              <CheckCircle2 className="h-8 w-8 text-brand-teal" />
+              <div>
+                <p className="font-heading font-medium text-lg mb-1" style={{ color: "#0D2A47" }}>
+                  You&rsquo;re already on the list!
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  We already have your application on file. We&rsquo;ll reach out when a beta spot opens up.
+                </p>
+              </div>
+              <ButtonLink href="/" variant="outline" size="sm" className="mt-1">
+                Back to home
+              </ButtonLink>
+            </div>
+          )}
 
           <form
             onSubmit={handleSubmit(onSubmit)}

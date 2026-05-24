@@ -48,6 +48,12 @@ export function Nav() {
                 {link.label}
               </Link>
             ))}
+            <a
+              href="https://app.lifq.ai/login"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Log in
+            </a>
             <ButtonLink
               href="/beta-signup"
               className="bg-brand-blue hover:bg-[#1565C0] text-white px-4"
@@ -85,6 +91,12 @@ export function Nav() {
                       {link.label}
                     </Link>
                   ))}
+                  <a
+                    href="https://app.lifq.ai/login"
+                    className="text-base font-medium text-foreground hover:text-brand-blue transition-colors"
+                  >
+                    Log in
+                  </a>
                 </nav>
                 <ButtonLink
                   href="/beta-signup"
