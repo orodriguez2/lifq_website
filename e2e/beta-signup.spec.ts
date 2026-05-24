@@ -17,9 +17,9 @@ test.describe("Beta signup form", () => {
     await expect(page.locator("#household_type")).toBeVisible();
   });
 
-  test("honeypot field is not in viewport", async ({ page }) => {
+  test("honeypot field is hidden from users", async ({ page }) => {
     const honeypot = page.locator('input[name="honeypot"]');
-    await expect(honeypot).not.toBeInViewport();
+    await expect(honeypot).toBeHidden();
   });
 
   test("submit button text is 'Request my invite'", async ({ page }) => {
