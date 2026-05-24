@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TrackedCTA } from "@/components/ui/tracked-cta";
 import { Container } from "@/components/layout/Container";
 import { FadeUp } from "@/components/ui/animate";
 import { ArrowRight, Lock } from "lucide-react";
@@ -35,14 +36,15 @@ export function Hero() {
             </FadeUp>
             <FadeUp delay={0.22}>
               <div className="flex flex-col sm:flex-row gap-3">
-                <ButtonLink
+                <TrackedCTA
                   href="/beta-signup"
+                  analyticsLocation="hero"
                   className="bg-brand-blue hover:bg-[#1565C0] text-white px-8 h-12 text-base"
                   size="lg"
                 >
                   Join the beta waitlist
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </ButtonLink>
+                </TrackedCTA>
                 <ButtonLink
                   href="/pricing"
                   variant="outline"

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import { analytics } from "@/lib/analytics";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
-import { ButtonLink } from "@/components/ui/button-link";
+import { TrackedCTA } from "@/components/ui/tracked-cta";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -76,6 +76,10 @@ export default function PricingPage() {
   const [billing, setBilling] = useState<"monthly" | "annual">("annual");
   const [loading, setLoading] = useState<string | null>(null);
 
+  useEffect(() => {
+    analytics.pricingViewed();
+  }, []);
+
   async function handleCheckout(priceId: string, planKey: string) {
     setLoading(planKey);
     const res = await fetch("/api/checkout", {
@@ -85,7 +89,7 @@ export default function PricingPage() {
     });
     const json = await res.json();
     if (json.url) {
-      window.location.href = json.url;
+      window.location.assign(json.url);
     } else {
       setLoading(null);
       alert("Something went wrong. Please try again.");
@@ -185,8 +189,9 @@ export default function PricingPage() {
                 </ul>
 
                 {plan.ctaHref ? (
-                  <ButtonLink
+                  <TrackedCTA
                     href={plan.ctaHref}
+                    analyticsLocation="pricing_free"
                     className={cn(
                       "w-full justify-center",
                       plan.featured
@@ -197,7 +202,7 @@ export default function PricingPage() {
                   >
                     {plan.cta}
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </ButtonLink>
+                  </TrackedCTA>
                 ) : (
                   <Button
                     onClick={() => tier.priceId && handleCheckout(tier.priceId, plan.key)}

@@ -1,4 +1,4 @@
-import { ButtonLink } from "@/components/ui/button-link";
+import { TrackedCTA } from "@/components/ui/tracked-cta";
 import { Container } from "@/components/layout/Container";
 import { FadeUp } from "@/components/ui/animate";
 import { ArrowRight, Lock } from "lucide-react";
@@ -14,14 +14,15 @@ export function FinalCTA() {
           <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
             Our beta application is a brief 2-minute step to request your private invite.
           </p>
-          <ButtonLink
+          <TrackedCTA
             href="/beta-signup"
+            analyticsLocation="final_cta"
             className="bg-brand-blue hover:bg-[#1565C0] text-white px-10 h-12 text-base"
             size="lg"
           >
             Go to beta application
             <ArrowRight className="ml-2 h-4 w-4" />
-          </ButtonLink>
+          </TrackedCTA>
           <p className="mt-4 flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
             <Lock className="h-3.5 w-3.5" />
             Free during beta. Limited spots.

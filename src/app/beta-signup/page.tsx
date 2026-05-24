@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { analytics } from "@/lib/analytics";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { betaSignupSchema, type BetaSignupInput } from "@/lib/validations/beta-signup";
@@ -33,6 +34,10 @@ export default function BetaSignupPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [alreadySignedUp, setAlreadySignedUp] = useState(false);
 
+  useEffect(() => {
+    analytics.signupStarted();
+  }, []);
+
   const {
     register,
     control,
@@ -59,6 +64,7 @@ export default function BetaSignupPage() {
       setServerError(json.error ?? "Something went wrong. Please try again.");
       return;
     }
+    analytics.signupCompleted();
     router.push("/beta-signup/thank-you");
   }
 

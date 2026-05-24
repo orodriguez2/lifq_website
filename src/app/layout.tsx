@@ -4,6 +4,7 @@ import "./globals.css";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Analytics } from "@vercel/analytics/react";
+import { PostHogProvider } from "@/components/providers/PostHogProvider";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -69,10 +70,12 @@ export default function RootLayout({
       className={`${poppins.variable} ${sourceSans3.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <Nav />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <Analytics />
+        <PostHogProvider>
+          <Nav />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <Analytics />
+        </PostHogProvider>
       </body>
     </html>
   );

@@ -7,6 +7,7 @@ import { HowItWorks } from "@/components/home/HowItWorks";
 import { PrivacyCommitments } from "@/components/home/PrivacyCommitments";
 import { Vision } from "@/components/home/Vision";
 import { FinalCTA } from "@/components/home/FinalCTA";
+import { HomePageTracker } from "@/components/home/HomePageTracker";
 
 export const metadata = {
   title: "LifQ — Household Protection Intelligence",
@@ -15,6 +16,7 @@ export const metadata = {
 export default function HomePage() {
   return (
     <>
+      <HomePageTracker />
       <Hero />
       <ProblemGrid />
       <SolutionGrid />

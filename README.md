@@ -116,6 +116,31 @@ The pricing page on this site creates Stripe Checkout sessions using the **same 
 
 Both apps share the same Resend sender domain and PostHog project, giving a unified view of the full user funnel from marketing site visit through mobile app usage.
 
+### Analytics — PostHog event model
+
+PostHog is initialized in `src/components/providers/PostHogProvider.tsx` with privacy-first settings:
+
+```ts
+posthog.init(key, {
+  disable_session_recording: true,  // no replays
+  autocapture: false,               // no auto click/form tracking
+  capture_pageview: false,          // manual page events only
+  capture_pageleave: false,
+});
+```
+
+All events are fired manually via `src/lib/analytics.ts`:
+
+| Event | Fired from | When |
+| --- | --- | --- |
+| `landing_page_viewed` | `HomePageTracker` (client component in `page.tsx`) | On homepage mount |
+| `cta_clicked` | `TrackedCTA` wrapper, `Nav.tsx` | User clicks any beta/pricing CTA; `location` prop identifies which: `hero`, `final_cta`, `nav`, `pricing_free` |
+| `pricing_viewed` | `pricing/page.tsx` `useEffect` | On pricing page mount |
+| `signup_started` | `beta-signup/page.tsx` `useEffect` | User lands on the beta form |
+| `signup_completed` | `beta-signup/page.tsx` `onSubmit` | After successful form POST (before redirect to thank-you) |
+
+`HomePageTracker` is a null-rendering client component imported into the Server Component homepage — it exists only to bridge the Server/Client boundary so `landing_page_viewed` can fire in `useEffect`.
+
 ### Domain architecture
 
 | Domain | Destination | Codebase |

@@ -4,9 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { analytics } from "@/lib/analytics";
 import { Container } from "./Container";
 
 const navLinks = [{ href: "/pricing", label: "Pricing" }];
@@ -58,6 +58,7 @@ export function Nav() {
               href="/beta-signup"
               className="bg-brand-blue hover:bg-[#1565C0] text-white px-4"
               size="sm"
+              onClick={() => analytics.ctaClicked("nav")}
             >
               Join the beta
             </ButtonLink>
@@ -100,7 +101,7 @@ export function Nav() {
                 </nav>
                 <ButtonLink
                   href="/beta-signup"
-                  onClick={() => setOpen(false)}
+                  onClick={() => { analytics.ctaClicked("nav"); setOpen(false); }}
                   className="bg-brand-blue hover:bg-[#1565C0] text-white w-full justify-center"
                 >
                   Join the beta
