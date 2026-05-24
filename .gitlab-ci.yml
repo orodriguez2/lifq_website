@@ -2,6 +2,7 @@ stages:
   - validate
   - build
   - test
+  - mirror
 
 # Playwright image version — bump here when upgrading @playwright/test
 variables:
@@ -96,21 +97,46 @@ e2e:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
 
+# ─── mirror stage ─────────────────────────────────────────────────────────────
+# Runs only after the full pipeline passes. Pushes to GitHub so Vercel deploys.
+# The token value lives in GitLab → Settings → CI/CD → Variables (masked).
+
+mirror-to-github:
+  stage: mirror
+  image: alpine/git
+  before_script: []  # skip npm ci
+  needs:
+    - e2e
+  script:
+    - git remote add github "https://oauth2:${GITHUB_PAT}@github.com/${GITHUB_USERNAME}/lifq-web.git"
+    - git push github "HEAD:refs/heads/${CI_COMMIT_BRANCH}" --force
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
 # ─── deployment note ──────────────────────────────────────────────────────────
 #
 # Deployment is handled by Vercel — NOT by this pipeline.
 #
 # Flow:
-#   git push → GitLab (source of truth)
-#              └── push mirror → GitHub (automatic, ~seconds)
-#                                └── Vercel webhook
-#                                      ├── feature branch → preview URL (7-day TTL)
-#                                      └── master → lifq.ai (production)
+#   git push → GitLab CI (validate → build → test → mirror)
+#              └── all stages pass → mirror-to-github pushes to GitHub
+#                                    └── Vercel webhook
+#                                          ├── feature branch → preview URL (7-day TTL)
+#                                          └── master → lifq.ai (production)
+#
+#   If any CI stage fails → GitHub is never touched → no Vercel deploy.
 #
 # Required GitLab CI/CD variables (Settings → CI/CD → Variables):
-#   NEXT_PUBLIC_SUPABASE_URL          used by: build, e2e
-#   NEXT_PUBLIC_SUPABASE_ANON_KEY     used by: build, e2e
+#   NEXT_PUBLIC_SUPABASE_URL           used by: build, e2e
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY      used by: build, e2e
 #   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY used by: build, e2e
+#   GITHUB_PAT                         used by: mirror-to-github (masked, repo scope)
+#   GITHUB_USERNAME                    used by: mirror-to-github
 #
 # Vercel env vars are managed in Vercel Dashboard — not here.
 # VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID are NOT needed in GitLab CI.
+#
+# One-time setup:
+#   1. Delete the automatic push mirror in GitLab → Settings → Repository → Mirroring
+#   2. Add GITHUB_PAT (GitHub PAT, repo scope, masked) to GitLab CI/CD variables
+#   3. Add GITHUB_USERNAME to GitLab CI/CD variables
