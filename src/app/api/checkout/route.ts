@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { z } from "zod";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 const checkoutSchema = z.object({
   priceId: z.string().startsWith("price_"),
   email: z.string().email().optional(),
 });
 
 export async function POST(request: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
   try {
     const body = await request.json();
     const parsed = checkoutSchema.safeParse(body);
