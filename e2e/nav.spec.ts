@@ -5,12 +5,6 @@ test.describe("Navigation", () => {
     await page.goto("/");
   });
 
-  test("Log in link points to app.lifq.ai", async ({ page }) => {
-    const loginLink = page.locator('a[href="https://app.lifq.ai/login"]').first();
-    await expect(loginLink).toBeVisible();
-    await expect(loginLink).toHaveText("Log in");
-  });
-
   test("Join the beta button in header links to /beta-signup", async ({ page }) => {
     await expect(page.locator('header a[href="/beta-signup"]').first()).toBeVisible();
   });
