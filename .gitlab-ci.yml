@@ -109,7 +109,7 @@ mirror-to-github:
   needs:
     - e2e
   script:
-    - git remote add github "https://oauth2:${GITHUB_PAT}@github.com/orodriguez2/lifq_website.git"
+    - git remote add github "https://x-access-token:${GITHUB_PAT}@github.com/orodriguez2/lifq_website.git"
     - git push github "HEAD:refs/heads/${CI_COMMIT_BRANCH}" --force
   rules:
     - if: $CI_COMMIT_BRANCH
