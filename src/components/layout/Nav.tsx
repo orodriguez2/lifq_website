@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { analytics } from "@/lib/analytics";
 import { Container } from "./Container";
 
-const navLinks = [{ href: "/pricing", label: "Pricing" }];
+const navLinks: { href: string; label: string }[] = [];
 
 export function Nav() {
   const [open, setOpen] = useState(false);

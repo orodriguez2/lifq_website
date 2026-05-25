@@ -5,13 +5,6 @@ test.describe("Navigation", () => {
     await page.goto("/");
   });
 
-  test("Pricing link is visible and navigates to /pricing", async ({ page }) => {
-    const pricingLink = page.locator('header a[href="/pricing"]').first();
-    await expect(pricingLink).toBeVisible();
-    await pricingLink.click();
-    await expect(page).toHaveURL("/pricing");
-  });
-
   test("Log in link points to app.lifq.ai", async ({ page }) => {
     const loginLink = page.locator('a[href="https://app.lifq.ai/login"]').first();
     await expect(loginLink).toBeVisible();

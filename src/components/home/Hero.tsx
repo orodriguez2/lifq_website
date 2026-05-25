@@ -45,14 +45,6 @@ export function Hero() {
                   Join the beta waitlist
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </TrackedCTA>
-                <ButtonLink
-                  href="/pricing"
-                  variant="outline"
-                  className="h-12 text-base px-8"
-                  size="lg"
-                >
-                  See pricing
-                </ButtonLink>
               </div>
               <p className="mt-4 flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Lock className="h-3.5 w-3.5 shrink-0" />
