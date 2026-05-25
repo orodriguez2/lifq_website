@@ -2,14 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Container } from "./Container";
 
-const socialLinks = [
-  { href: "https://facebook.com", label: "FB" },
-  { href: "https://instagram.com", label: "IG" },
-  { href: "https://youtube.com", label: "YT" },
-  { href: "https://x.com", label: "X" },
-  { href: "https://linkedin.com", label: "LI" },
-];
-
 const footerLinks = [
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
@@ -51,20 +43,6 @@ export function Footer() {
             ))}
           </nav>
 
-          <div className="flex gap-4">
-            {socialLinks.map(({ href, label }) => (
-              <a
-                key={href}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {label}
-              </a>
-            ))}
-          </div>
         </div>
 
         <div className="border-t border-border py-4">
