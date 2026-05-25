@@ -45,10 +45,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     }
 
-    // Send confirmation email — best-effort
+    // Send emails — best-effort (both fire independently)
     if (process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL) {
       const resend = new Resend(process.env.RESEND_API_KEY);
-      await resend.emails.send({
+
+      // Confirmation to applicant
+      resend.emails.send({
         from: process.env.RESEND_FROM_EMAIL,
         to: data.email,
         subject: "You're on the LifQ waitlist!",
@@ -60,6 +62,29 @@ export async function POST(request: NextRequest) {
             <p style="color: #64748B; font-size: 14px;">Free during beta. Limited spots. We appreciate your patience.</p>
             <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0;" />
             <p style="font-size: 12px; color: #94A3B8;">LifQ · <a href="https://lifq.ai">lifq.ai</a></p>
+          </div>
+        `,
+      }).catch(console.error);
+
+      // Admin notification
+      resend.emails.send({
+        from: process.env.RESEND_FROM_EMAIL,
+        to: "octavio.rodriguez@gmail.com",
+        subject: `New beta application — ${data.first_name} ${data.last_name}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #1E293B;">
+            <h2 style="color: #0D2A47;">New beta application</h2>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <tr><td style="padding: 6px 0; color: #64748B; width: 140px;">Name</td><td style="padding: 6px 0;">${data.first_name} ${data.last_name}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748B;">Email</td><td style="padding: 6px 0;"><a href="mailto:${data.email}">${data.email}</a></td></tr>
+              <tr><td style="padding: 6px 0; color: #64748B;">Age range</td><td style="padding: 6px 0;">${data.age_range}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748B;">Household</td><td style="padding: 6px 0;">${data.household_type}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748B;">Policy count</td><td style="padding: 6px 0;">${data.policy_count}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748B;">Policy types</td><td style="padding: 6px 0;">${data.policy_types.join(", ")}</td></tr>
+              ${data.biggest_frustration ? `<tr><td style="padding: 6px 0; color: #64748B; vertical-align: top;">Frustration</td><td style="padding: 6px 0;">${data.biggest_frustration}</td></tr>` : ""}
+            </table>
+            <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0;" />
+            <p style="font-size: 12px; color: #94A3B8;"><a href="https://supabase.com/dashboard/project/dfnemjldftwzwjturglh/editor">View all applications in Supabase →</a></p>
           </div>
         `,
       }).catch(console.error);
