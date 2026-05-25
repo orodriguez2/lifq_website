@@ -20,7 +20,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { honeypot: _, ...data } = parsed.data;
+    const { honeypot: _h, turnstile_token, ...data } = parsed.data;
+
+    // Verify Turnstile token with Cloudflare
+    const turnstileRes = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY,
+          response: turnstile_token,
+        }),
+      }
+    );
+    const turnstileJson = await turnstileRes.json();
+    if (!turnstileJson.success) {
+      return NextResponse.json(
+        { error: "CAPTCHA verification failed. Please try again." },
+        { status: 400 }
+      );
+    }
+
     const supabase = createAdminClient();
 
     const { error } = await supabase.from("beta_signups").insert({

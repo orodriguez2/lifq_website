@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { ButtonLink } from "@/components/ui/button-link";
 import { CheckCircle2, Loader2 } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function BetaSignupPage() {
   const router = useRouter();
@@ -42,10 +43,11 @@ export default function BetaSignupPage() {
     register,
     control,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<BetaSignupInput>({
     resolver: zodResolver(betaSignupSchema),
-    defaultValues: { policy_types: [] },
+    defaultValues: { policy_types: [], turnstile_token: "" },
   });
 
   async function onSubmit(data: BetaSignupInput) {
@@ -270,6 +272,19 @@ export default function BetaSignupPage() {
                 rows={3}
                 maxLength={1000}
               />
+            </div>
+
+            {/* Turnstile CAPTCHA */}
+            <div>
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
+                onSuccess={(token) => setValue("turnstile_token", token)}
+                onError={() => setValue("turnstile_token", "")}
+                onExpire={() => setValue("turnstile_token", "")}
+              />
+              {errors.turnstile_token && (
+                <p className="text-xs text-destructive mt-1">{errors.turnstile_token.message}</p>
+              )}
             </div>
 
             {/* Server error */}

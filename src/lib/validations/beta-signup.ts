@@ -19,6 +19,7 @@ export const betaSignupSchema = z.object({
     .min(1, "Select at least one policy type"),
   biggest_frustration: z.string().max(1000).optional(),
   honeypot: z.string().max(0).optional(),
+  turnstile_token: z.string().min(1, "Please complete the CAPTCHA"),
 });
 
 export type BetaSignupInput = z.infer<typeof betaSignupSchema>;
