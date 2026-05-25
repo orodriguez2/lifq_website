@@ -103,8 +103,9 @@ e2e:
 
 mirror-to-github:
   stage: mirror
-  image: node:22-alpine  # already cached; includes git, no entrypoint conflict
-  before_script: []  # skip npm ci
+  image: node:22-alpine
+  before_script:
+    - apk add --no-cache git
   needs:
     - e2e
   script:
