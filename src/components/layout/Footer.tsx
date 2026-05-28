@@ -3,10 +3,16 @@ import Image from "next/image";
 import { Container } from "./Container";
 
 const footerLinks = [
+  { href: "/features", label: "Features" },
+  { href: "/solutions", label: "Solutions" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/blog", label: "Blog" },
+  { href: "/glossary", label: "Glossary" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/about", label: "About" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
   { href: "mailto:hello@lifq.ai", label: "Contact" },
-  { href: "https://lifq.ai", label: "lifq.ai" },
 ];
 
 export function Footer() {

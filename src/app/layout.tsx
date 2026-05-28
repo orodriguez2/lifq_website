@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Poppins, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Analytics } from "@vercel/analytics/react";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
+import { organizationSchema, jsonLdScript } from "@/lib/seo/structured-data";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -28,7 +30,7 @@ export const metadata: Metadata = {
   },
   description:
     "LifQ is an AI-powered platform that helps families organize, understand, and manage their insurance, benefits, and warranties so they can make smarter protection decisions.",
-  keywords: ["insurance", "benefits", "warranties", "household", "AI", "coverage", "family"],
+  keywords: ["insurance", "benefits", "warranties", "household", "AI", "coverage", "family", "HSA", "FSA", "open enrollment"],
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -59,6 +61,9 @@ export const metadata: Metadata = {
   },
 };
 
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -69,6 +74,12 @@ export default function RootLayout({
       lang="en"
       className={`${poppins.variable} ${sourceSans3.variable} h-full`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationSchema()) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <PostHogProvider>
           <Nav />
@@ -76,6 +87,26 @@ export default function RootLayout({
           <Footer />
           <Analytics />
         </PostHogProvider>
+
+        {/* Google Analytics 4 */}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
+            </Script>
+          </>
+        )}
+
+        {/* Microsoft Clarity */}
+        {CLARITY_ID && (
+          <Script id="microsoft-clarity" strategy="afterInteractive">
+            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_ID}");`}
+          </Script>
+        )}
       </body>
     </html>
   );

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { TrackedCTA } from "@/components/ui/tracked-cta";
 import { Container } from "@/components/layout/Container";
 import { FadeUp } from "@/components/ui/animate";
@@ -26,6 +27,12 @@ export function FinalCTA() {
           <p className="mt-4 flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
             <Lock className="h-3.5 w-3.5" />
             Free during beta. Limited spots.
+          </p>
+          <p className="mt-6 text-sm text-muted-foreground">
+            Not ready yet?{" "}
+            <Link href="/solutions" className="text-brand-blue hover:underline font-medium">
+              Browse what LifQ solves →
+            </Link>
           </p>
         </FadeUp>
       </Container>

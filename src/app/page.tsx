@@ -6,6 +6,8 @@ import { RealWorldQuestions } from "@/components/home/RealWorldQuestions";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { PrivacyCommitments } from "@/components/home/PrivacyCommitments";
 import { Vision } from "@/components/home/Vision";
+import { Testimonials } from "@/components/home/Testimonials";
+import { HomeFAQ } from "@/components/home/HomeFAQ";
 import { FinalCTA } from "@/components/home/FinalCTA";
 import { HomePageTracker } from "@/components/home/HomePageTracker";
 
@@ -25,6 +27,8 @@ export default function HomePage() {
       <HowItWorks />
       <PrivacyCommitments />
       <Vision />
+      <Testimonials />
+      <HomeFAQ />
       <FinalCTA />
     </>
   );

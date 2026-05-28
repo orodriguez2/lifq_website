@@ -2,8 +2,15 @@ import type { Metadata } from "next";
 import { Container } from "@/components/layout/Container";
 
 export const metadata: Metadata = {
-  title: "Terms of service",
-  description: "Terms and conditions for using LifQ.",
+  title: "Terms of service — LifQ",
+  description: "Terms and conditions for using LifQ, the AI-powered household protection platform.",
+  alternates: { canonical: "/terms" },
+  openGraph: {
+    title: "Terms of service — LifQ",
+    description: "Terms and conditions for using LifQ.",
+    url: "/terms",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function TermsPage() {

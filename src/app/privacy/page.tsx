@@ -2,8 +2,15 @@ import type { Metadata } from "next";
 import { Container } from "@/components/layout/Container";
 
 export const metadata: Metadata = {
-  title: "Privacy policy",
-  description: "How LifQ collects, uses, and protects your information.",
+  title: "Privacy policy — LifQ",
+  description: "How LifQ collects, uses, and protects your information. Bank-level encryption, no data selling, and you control your information.",
+  alternates: { canonical: "/privacy" },
+  openGraph: {
+    title: "Privacy policy — LifQ",
+    description: "How LifQ collects, uses, and protects your information.",
+    url: "/privacy",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function PrivacyPage() {
