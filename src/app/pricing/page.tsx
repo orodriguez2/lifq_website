@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { analytics } from "@/lib/analytics";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
 import { TrackedCTA } from "@/components/ui/tracked-cta";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
 const PRICE_IDS = {
   solo: {
@@ -75,25 +76,43 @@ const plans = [
 export default function PricingPage() {
   const [billing, setBilling] = useState<"monthly" | "annual">("annual");
   const [loading, setLoading] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
+  const pendingCheckout = useRef<{ priceId: string; planKey: string } | null>(null);
 
   useEffect(() => {
     analytics.pricingViewed();
   }, []);
 
-  async function handleCheckout(priceId: string, planKey: string) {
+  function handleCheckout(priceId: string, planKey: string) {
     setLoading(planKey);
+    pendingCheckout.current = { priceId, planKey };
+    turnstileRef.current?.execute();
+  }
+
+  async function onTurnstileSuccess(token: string) {
+    const pending = pendingCheckout.current;
+    if (!pending) return;
+    pendingCheckout.current = null;
+
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceId }),
+      body: JSON.stringify({ priceId: pending.priceId, turnstile_token: token }),
     });
     const json = await res.json();
+    turnstileRef.current?.reset();
     if (json.url) {
       window.location.assign(json.url);
     } else {
       setLoading(null);
       alert("Something went wrong. Please try again.");
     }
+  }
+
+  function onTurnstileError() {
+    pendingCheckout.current = null;
+    setLoading(null);
+    turnstileRef.current?.reset();
   }
 
   return (
@@ -227,6 +246,16 @@ export default function PricingPage() {
         <p className="text-center text-sm text-muted-foreground mt-8">
           All paid plans include a 14-day free trial. Cancel anytime.
         </p>
+
+        {/* Invisible Turnstile — fires on checkout button click, not on page load */}
+        <Turnstile
+          ref={turnstileRef}
+          siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
+          options={{ size: "invisible", execution: "execute" }}
+          onSuccess={onTurnstileSuccess}
+          onError={onTurnstileError}
+          onExpire={() => turnstileRef.current?.reset()}
+        />
       </Container>
     </section>
   );
