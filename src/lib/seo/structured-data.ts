@@ -1,4 +1,5 @@
 import type { SolutionFAQ } from "@/content/solutions/types";
+import { SCHEMA_PRICES } from "@/lib/constants/pricing";
 
 const BASE_URL = "https://lifq.ai";
 
@@ -95,11 +96,11 @@ export function productSchema() {
       {
         "@type": "Offer",
         name: "Solo Plan",
-        price: "7.00",
+        price: SCHEMA_PRICES.solo.annual,
         priceCurrency: "USD",
         priceSpecification: {
           "@type": "UnitPriceSpecification",
-          price: "7.00",
+          price: SCHEMA_PRICES.solo.annual,
           priceCurrency: "USD",
           billingDuration: "P1M",
         },
@@ -107,7 +108,7 @@ export function productSchema() {
       {
         "@type": "Offer",
         name: "Family Plan",
-        price: "12.00",
+        price: SCHEMA_PRICES.family.annual,
         priceCurrency: "USD",
       },
     ],

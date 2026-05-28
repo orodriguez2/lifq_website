@@ -8,6 +8,7 @@ import { TrackedCTA } from "@/components/ui/tracked-cta";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+import { DISPLAY_PRICES } from "@/lib/constants/pricing";
 
 const PRICE_IDS = {
   solo: {
@@ -39,8 +40,8 @@ const plans = [
   {
     key: "solo",
     name: "Solo",
-    monthly: { price: "$9", priceId: PRICE_IDS.solo.monthly },
-    annual: { price: "$7", priceId: PRICE_IDS.solo.annual },
+    monthly: { price: DISPLAY_PRICES.solo.monthly.amount, priceId: PRICE_IDS.solo.monthly },
+    annual: { price: DISPLAY_PRICES.solo.annual.amount, priceId: PRICE_IDS.solo.annual },
     description: "Complete coverage clarity for individuals.",
     cta: "Start Solo",
     ctaHref: null,
@@ -57,8 +58,8 @@ const plans = [
   {
     key: "family",
     name: "Family",
-    monthly: { price: "$15", priceId: PRICE_IDS.family.monthly },
-    annual: { price: "$12", priceId: PRICE_IDS.family.annual },
+    monthly: { price: DISPLAY_PRICES.family.monthly.amount, priceId: PRICE_IDS.family.monthly },
+    annual: { price: DISPLAY_PRICES.family.annual.amount, priceId: PRICE_IDS.family.annual },
     description: "Protection intelligence for your whole household.",
     cta: "Start Family",
     ctaHref: null,
