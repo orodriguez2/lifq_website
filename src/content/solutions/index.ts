@@ -582,6 +582,11 @@ export const solutions: Solution[] = [
         answer:
           "Yes. Credit card benefits like Priority Pass lounge access, travel credits, and streaming subscriptions can be added to your LifQ membership inventory.",
       },
+      {
+        question: "Can I share my subscription inventory with my household?",
+        answer:
+          "Yes. LifQ's Family plan lets you share your complete membership inventory with other household members — so everyone knows what services are available and what's already being paid for.",
+      },
     ],
     cta: {
       headline: "Find out what you're actually paying for",
@@ -699,6 +704,11 @@ export const solutions: Solution[] = [
         answer:
           "Yes. LifQ can show which of your cards provides the best protection for a specific type of purchase — useful for big-ticket items or travel bookings.",
       },
+      {
+        question: "What if my credit card benefits change?",
+        answer:
+          "Card issuers update benefits periodically. When your benefits guide changes, you can re-upload it to LifQ and it will update your benefits inventory — flagging anything that improved or was removed.",
+      },
     ],
     cta: {
       headline: "Start using benefits you're already paying card fees for",
@@ -812,6 +822,11 @@ export const solutions: Solution[] = [
         question: "What happens when I miss a deadline?",
         answer:
           "LifQ will show you what options remain and what the implications are. In some cases, alternative coverage options still exist — LifQ helps you find them.",
+      },
+      {
+        question: "Can I add reminders for things that aren't in my uploaded documents?",
+        answer:
+          "Yes. You can manually add any date-based reminder to LifQ — an upcoming policy review, a contract renewal, or any coverage deadline you want to track — even without uploading a document.",
       },
     ],
     cta: {
@@ -927,6 +942,11 @@ export const solutions: Solution[] = [
         answer:
           "Medical, dental, and vision expenses are the most common categories. But the list also includes mental health services, certain OTC medications, medical equipment, and in some cases fertility treatments. LifQ maintains an up-to-date list of eligible expenses.",
       },
+      {
+        question: "Can both spouses have separate FSA accounts?",
+        answer:
+          "Yes. If both spouses have access to FSAs through their employers, each can contribute up to the annual limit independently. LifQ can track both accounts together so your household has a unified view of total tax-free healthcare dollars available.",
+      },
     ],
     cta: {
       headline: "Never forfeit another healthcare dollar",
@@ -1039,6 +1059,11 @@ export const solutions: Solution[] = [
         question: "What if I need to make a claim during a trip?",
         answer:
           "LifQ's Claims Guidance feature helps you understand what documentation to collect and who to contact for each coverage type — accessible on your phone wherever you are.",
+      },
+      {
+        question: "Does travel coverage differ by destination country?",
+        answer:
+          "Yes. Some credit card travel benefits have geographic exclusions, and health insurance international coverage varies by plan and country. LifQ surfaces destination-specific limitations based on your actual policy documents so you know exactly what applies to each trip.",
       },
     ],
     cta: {

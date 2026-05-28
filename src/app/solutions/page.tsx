@@ -18,6 +18,11 @@ export const metadata: Metadata = {
       "AI-powered solutions for every aspect of your household protection portfolio.",
     url: "/solutions",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Solutions — LifQ Household Protection",
+    description: "AI-powered solutions for every aspect of your household protection portfolio.",
+  },
 };
 
 const categories: Record<string, { label: string; color: string }> = {

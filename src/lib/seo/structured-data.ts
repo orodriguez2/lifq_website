@@ -11,7 +11,6 @@ export function organizationSchema() {
     logo: `${BASE_URL}/logos/logo-horizontal.png`,
     description:
       "LifQ is an AI-powered platform that helps families organize, understand, and manage their insurance, benefits, and warranties so they can make smarter protection decisions.",
-    sameAs: [],
     contactPoint: {
       "@type": "ContactPoint",
       email: "hello@lifq.ai",

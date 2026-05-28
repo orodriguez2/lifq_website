@@ -56,7 +56,7 @@ export default async function SolutionPage({
   const breadcrumbLd = breadcrumbSchema([
     { name: "Home", href: "/" },
     { name: "Solutions", href: "/solutions" },
-    { name: solution.category, href: `/solutions/${slug}` },
+    { name: solution.headline, href: `/solutions/${slug}` },
   ]);
 
   return (
