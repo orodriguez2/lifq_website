@@ -59,9 +59,16 @@ export default function BlogPage() {
                     href={`/blog/${post.slug}`}
                     className="group flex flex-col gap-4 p-6 rounded-2xl border border-border bg-card hover:border-brand-blue/40 hover:shadow-md transition-all h-full"
                   >
-                    <span className={`self-start text-xs font-medium rounded-full px-2.5 py-1 ${color}`}>
-                      {post.category}
-                    </span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`text-xs font-medium rounded-full px-2.5 py-1 ${color}`}>
+                        {post.category}
+                      </span>
+                      {post.isNew && (
+                        <span className="text-xs font-semibold rounded-full px-2.5 py-1 bg-orange-50 text-[#FB8C00]">
+                          New
+                        </span>
+                      )}
+                    </div>
                     <h2 className="text-base font-heading font-medium leading-snug group-hover:text-brand-blue transition-colors flex-1" style={{ color: "#0D2A47" }}>
                       {post.title}
                     </h2>
